@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wolfcode.p2p.bussiness.mapper.AccountFlowMapper" >
+  <resultMap id="BaseResultMap" type="cn.wolfcode.p2p.bussiness.domain.AccountFlow" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="actionType" property="actionType" jdbcType="TINYINT" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="usableAmount" property="usableAmount" jdbcType="DECIMAL" />
+    <result column="freezedAmount" property="freezedAmount" jdbcType="DECIMAL" />
+    <result column="tradeTime" property="tradeTime" jdbcType="TIMESTAMP" />
+    <result column="accountId" property="accountId" jdbcType="BIGINT" />
+  </resultMap>
+
+  <insert id="insert" parameterType="cn.wolfcode.p2p.bussiness.domain.AccountFlow" useGeneratedKeys="true" keyProperty="id" >
+    insert into `accountflow` (actionType, amount, remark, 
+      usableAmount, freezedAmount, tradeTime, 
+      accountId)
+    values (#{actionType,jdbcType=TINYINT}, #{amount,jdbcType=DECIMAL}, #{remark,jdbcType=VARCHAR}, 
+      #{usableAmount,jdbcType=DECIMAL}, #{freezedAmount,jdbcType=DECIMAL}, #{tradeTime,jdbcType=TIMESTAMP}, 
+      #{accountId,jdbcType=BIGINT})
+  </insert>
+
+</mapper>

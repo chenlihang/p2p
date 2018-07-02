@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wolfcode.p2p.base.mapper.LogininfoMapper" >
+  <resultMap id="BaseResultMap" type="cn.wolfcode.p2p.base.domain.Logininfo" >
+    <id column="id" property="id" />
+    <result column="username" property="username" />
+    <result column="password" property="password" />
+    <result column="state" property="state" />
+    <result column="userType" property="userType" />
+  </resultMap>
+  <insert id="insert" parameterType="cn.wolfcode.p2p.base.domain.Logininfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into `logininfo` (username, password, state,userType)
+    values (#{username}, #{password}, #{state},#{userType})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.wolfcode.p2p.base.domain.Logininfo" >
+    update `logininfo`
+    set username = #{username},
+      password = #{password},
+      userType = #{userType},
+      state = #{state}
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, username, password, state,userType
+    from `logininfo`
+    where id = #{id}
+  </select>
+  <select id="selectCountByUsername" resultType="int">
+    select count(id) from logininfo where username = #{username}
+  </select>
+  <select id="login" resultMap="BaseResultMap">
+    select id, username, password, state,userType from logininfo where username = #{username} and password = #{password} and userType = #{userType}
+  </select>
+  <select id="queryByUserType" resultType="int">
+    select count(id) from logininfo where userType = #{userType}
+  </select>
+</mapper>

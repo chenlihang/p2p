@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wolfcode.p2p.base.mapper.UserFileMapper" >
+  <resultMap id="BaseResultMap" type="cn.wolfcode.p2p.base.domain.UserFile" >
+    <id column="id" property="id" />
+    <result column="state" property="state" />
+    <result column="remark" property="remark" />
+    <result column="auditTime" property="auditTime" />
+    <result column="applyTime" property="applyTime" />
+    <result column="score" property="score" />
+    <result column="image" property="image" />
+    <association property="auditor" columnPrefix="au_" javaType="cn.wolfcode.p2p.base.domain.Logininfo">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+    <association property="applier" columnPrefix="ap_" javaType="cn.wolfcode.p2p.base.domain.Logininfo">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+    <association property="fileType" column="fileType_id" javaType="cn.wolfcode.p2p.base.domain.SystemDictionaryItem" select="cn.wolfcode.p2p.base.mapper.SystemDictionaryItemMapper.selectByPrimaryKey"/>
+  </resultMap>
+ 
+  <insert id="insert" parameterType="cn.wolfcode.p2p.base.domain.UserFile" useGeneratedKeys="true" keyProperty="id" >
+    insert into `userfile` (state, remark, auditTime, applyTime, auditor_id, applier_id, 
+      score, image, fileType_id)
+    values (#{state}, #{remark}, #{auditTime}, #{applyTime}, #{auditor.id}, #{applier.id}, 
+      #{score}, #{image}, #{fileType.id})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.wolfcode.p2p.base.domain.UserFile" >
+    update `userfile`
+    set state = #{state},
+      remark = #{remark},
+      auditTime = #{auditTime},
+      applyTime = #{applyTime},
+      auditor_id = #{auditor.id},
+      applier_id = #{applier.id},
+      score = #{score},
+      image = #{image},
+      fileType_id = #{fileType.id}
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select uf.id, uf.state, uf.remark, uf.auditTime, uf.applyTime,uf.score, uf.image,fileType_id,
+    ap.id as ap_id,ap.username as ap_username,
+    au.id as au_id,au.username as au_username
+    from `userfile` uf
+    join logininfo ap on(uf.applier_id=ap.id)
+    left join  logininfo au on(uf.auditor_id=au.id)
+    where uf.id = #{id}
+  </select>
+  <select id="selectList" resultMap="BaseResultMap" >
+     select uf.id, uf.state, uf.remark, uf.auditTime, uf.applyTime,uf.score, uf.image,fileType_id,
+    ap.id as ap_id,ap.username as ap_username,
+    au.id as au_id,au.username as au_username
+    from `userfile` uf
+    join logininfo ap on(uf.applier_id=ap.id)
+    left join  logininfo au on(uf.auditor_id=au.id)
+  </select>
+  <select id="queryUnSelectFileTypeList" resultMap="BaseResultMap">
+    select uf.id, uf.state, uf.remark, uf.auditTime, uf.applyTime,uf.score, uf.image,fileType_id,
+    ap.id as ap_id,ap.username as ap_username,
+    au.id as au_id,au.username as au_username
+    from `userfile` uf
+    join logininfo ap on(uf.applier_id=ap.id)
+    left join  logininfo au on(uf.auditor_id=au.id)
+    where uf.applier_id = #{applierId} and fileType_id IS NULL
+  </select>
+  <select id="queryFileTypeList" resultMap="BaseResultMap">
+     select uf.id, uf.state, uf.remark, uf.auditTime, uf.applyTime,uf.score, uf.image,fileType_id,
+    ap.id as ap_id,ap.username as ap_username,
+    au.id as au_id,au.username as au_username
+    from `userfile` uf
+    join logininfo ap on(uf.applier_id=ap.id)
+    left join  logininfo au on(uf.auditor_id=au.id)
+    where uf.applier_id = #{applierId}
+    <if test="isSelectFileType">
+      and fileType_id IS NOT NULL
+    </if>
+    <if test="!isSelectFileType">
+      and fileType_id IS NULL
+    </if>
+  </select>
+  <select id="queryListByUserId" resultMap="BaseResultMap">
+     select uf.id, uf.state, uf.remark, uf.auditTime, uf.applyTime,uf.score, uf.image,fileType_id,
+    ap.id as ap_id,ap.username as ap_username,
+    au.id as au_id,au.username as au_username
+    from `userfile` uf
+    join logininfo ap on(uf.applier_id=ap.id)
+    left join  logininfo au on(uf.auditor_id=au.id)
+    where uf.applier_id = #{logininfoId} and uf.state = 1
+  </select>
+</mapper>

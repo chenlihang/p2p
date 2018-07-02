@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wolfcode.p2p.bussiness.mapper.BidMapper" >
+  <resultMap id="BaseResultMap" type="cn.wolfcode.p2p.bussiness.domain.Bid" >
+    <id column="id" property="id" />
+    <result column="actualRate" property="actualRate" />
+    <result column="availableAmount" property="availableAmount" />
+    <result column="bidRequest_id" property="bidRequestId" />
+    <result column="bidTime" property="bidTime" />
+    <result column="bidRequestTitle" property="bidRequestTitle" />
+    <result column="bidRequestState" property="bidRequestState" />
+    <association property="bidUser" javaType="cn.wolfcode.p2p.base.domain.Logininfo" columnPrefix="bu_">
+      <id column="id" property="id"/>
+      <result column="username" property="username"/>
+    </association>
+  </resultMap>
+  <insert id="insert" parameterType="cn.wolfcode.p2p.bussiness.domain.Bid" useGeneratedKeys="true" keyProperty="id" >
+    insert into `bid` (actualRate, availableAmount, bidrequest_id, bidUser_id, bidTime, 
+      bidRequestTitle, bidRequestState)
+    values (#{actualRate}, #{availableAmount}, #{bidRequestId}, #{bidUser.id}, #{bidTime}, 
+      #{bidRequestTitle}, #{bidRequestState})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.wolfcode.p2p.bussiness.domain.Bid" >
+    update `bid`
+    set actualRate = #{actualRate},
+      availableAmount = #{availableAmount},
+      bidrequest_id = #{bidRequestId},
+      bidUser_id = #{bidUser.id},
+      bidTime = #{bidTime},
+      bidRequestTitle = #{bidRequestTitle},
+      bidRequestState = #{bidRequestState}
+    where id = #{id}
+  </update>
+    <update id="updateState">
+      update bid set bidRequestState = #{state} where bidrequest_id = #{bidRequestId}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select bid.id, bid.actualRate, bid.availableAmount, bid.bidrequest_id, bid.bidUser_id, bid.bidTime, bid.bidRequestTitle,
+    bid.bidRequestState,
+    bu.id as bu_id,bu.username as bu_username
+    from `bid` bid
+    join logininfo bu on (bid.bidUser_id=bu.id)
+    where bid.id = #{id}
+  </select>
+  <select id="selectByBidRequestId" resultMap="BaseResultMap">
+    select bid.id, bid.actualRate, bid.availableAmount, bid.bidrequest_id, bid.bidUser_id, bid.bidTime, bid.bidRequestTitle,
+    bid.bidRequestState,
+    bu.id as bu_id,bu.username as bu_username
+    from `bid` bid
+    join logininfo bu on (bid.bidUser_id=bu.id)
+    where bid.bidrequest_id = #{bidRequestId}
+  </select>
+</mapper>
